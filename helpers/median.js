@@ -2,7 +2,7 @@ function calculateMedian(nums) {
     nums.sort();
     if (nums.length % 2 != 0) {
         //length of nums is odd
-        return nums[Math.floor(nums.legnth / 2)];
+        return nums[Math.floor(nums.length / 2)];
     }
     else {
         //length of nums is even
