@@ -81,6 +81,25 @@ app.get('/mode', (req, res, next) => {
     }
 });
 
+app.get('/all', (req, res, next) => {
+    try {
+        if (!req.query.nums) {
+            throw new NoNumsError("No nums property in query string", 400);
+        }
+        else if (!(isQueryAllNumbers(req.query.nums))) {
+            throw new InvalidNumsError("One of more of the values in nums is not a number", 400);
+        }
+        let numsArray = convertStringToNumberArray(req.query.nums);
+        let mean = calculateMean(numsArray);
+        let median = calculateMedian(numsArray);
+        let modes = calculateMode(numsArray);
+        return res.status(200).json({ response: {operation: "all", mean: mean, median: median, modes: modes} });
+    }
+    catch(e) {
+        next(e);
+    }
+});
+
 // If no other route matches, respond with a 404
 app.use((req, res, next) => {
     const e = new NoPageFoundError("Page Not Found", 404);
