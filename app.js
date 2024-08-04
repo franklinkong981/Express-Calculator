@@ -10,26 +10,39 @@ const NoNumsError = require('./errors/noNumsError.js');
 const InvalidNumsError = require('./errors/invalidNumsError.js');
 const NoPageFoundError = require('./errors/noPageFoundError.js');
 
+function isNumber(value) {
+    return !isNaN(value);
+}
+
 function isQueryAllNumbers(query) {
     let queryParts = query.split(",");
-    for (let part in queryParts) {
-        if (isNaN(part)) {
+    for (let part of queryParts) {
+        if (!(isNumber(part))) {
             return false;
         }
     }
     return true;
 }
 
+function convertStringToNumberArray(query) {
+    let numsArray = query.split(",");
+    for (let i = 0; i < numsArray.length; i++) {
+        numsArray[i] = Number(numsArray[i]);
+    }
+    return numsArray;
+}
+
 app.get('/mean', (req, res, next) => {
+    debugger;
     try {
-        if (!req.query.nums) {
+        if (!(req.query.nums)) {
             throw new NoNumsError("No nums property in query string", 400);
         }
         else if (!(isQueryAllNumbers(req.query.nums))) {
             throw new InvalidNumsError("One of more of the values in nums is not a number", 400);
         }
-        let mean = calculateMean([...req.query.nums]);
-        return res.status(200).json({ "response": {"operation": "mean", "value": mean} });
+        let mean = calculateMean(convertStringToNumberArray(req.query.nums));
+        return res.status(200).json({ response: {operation: "mean", value: mean} });
     }
     catch(e) {
         next(e);
@@ -44,8 +57,8 @@ app.get('/median', (req, res, next) => {
         else if (!(isQueryAllNumbers(req.query.nums))) {
             throw new InvalidNumsError("One of more of the values in nums is not a number", 400);
         }
-        let median = calculateMedian([...req.query.nums]);
-        return res.status(200).json({ "response": {"operation": "median", "value": median} });
+        let median = calculateMedian(convertStringToNumberArray(req.query.nums));
+        return res.status(200).json({ response: {operation: "median", value: median} });
     }
     catch(e) {
         next(e);
@@ -60,8 +73,8 @@ app.get('/mode', (req, res, next) => {
         else if (!(isQueryAllNumbers(req.query.nums))) {
             throw new InvalidNumsError("One of more of the values in nums is not a number", 400);
         }
-        let modes = calculateMode([...req.query.nums]);
-        return res.status(200).json({ "response": {"operation": "mode", "value": modes} });
+        let modes = calculateMode(convertStringToNumberArray(req.query.nums));
+        return res.status(200).json({ response: {operation: "mode", value: modes} });
     }
     catch(e) {
         next(e);
@@ -70,8 +83,8 @@ app.get('/mode', (req, res, next) => {
 
 // If no other route matches, respond with a 404
 app.use((req, res, next) => {
-    const e = new PageNotFoundError("Page Not Found", 404)
-    next(e)
+    const e = new NoPageFoundError("Page Not Found", 404);
+    next(e);
 });
 
 // Error handler
@@ -86,5 +99,10 @@ app.use(function (err, req, res, next) { //Note the 4 parameters!
       error: { message, status }
     });
 });
+
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
+  
   
 
