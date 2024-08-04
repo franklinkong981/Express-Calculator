@@ -1,0 +1,16 @@
+{
+  "name": "express-calculator",
+  "version": "1.0.0",
+  "description": "An Express calculator that calculates mean, median, and mode for a comma-separated list of numbers in the query string.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "jest": "^29.7.0"
+  }
+}
